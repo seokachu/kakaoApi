@@ -27,8 +27,7 @@ export const deleteReview = async (id) => {
   return id;
 };
 
-// //수정하기
-// export const updateTodo = async (id, todo) => {
-//   await apiClient.patch(`/${id}`, todo);
-//   return id;
-// };
+//review 수정하기
+export const updateReview = async (id, review) => {
+  await apiClient.patch(`/${id}`, review);
+};

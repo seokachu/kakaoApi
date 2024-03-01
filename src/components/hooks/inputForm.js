@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const detailForm = (initialState = {}) => {
+const inputForm = (initialState = {}) => {
   const [formState, setFormState] = useState(initialState);
   const onChangeHandler = (e) => {
     const { name, value } = e.target; //아래 return 태그에서 name,value값을 가지고 오는것
@@ -15,4 +15,4 @@ const detailForm = (initialState = {}) => {
   return { formState, onChangeHandler, resetForm };
 };
 
-export default detailForm;
+export default inputForm;

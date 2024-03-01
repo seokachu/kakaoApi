@@ -1,15 +1,16 @@
 import { toast } from 'react-toastify';
-import detailForm from '../../components/hooks/detailForm';
+import inputForm from '../hooks/inputForm';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createReview } from '../../api/api';
 import uuid from 'react-uuid';
 import { useParams } from 'react-router';
+import { getFormattedDate } from '../../util/date';
 
 const ReviewForm = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
 
-  const { formState, onChangeHandler, resetForm } = detailForm({
+  const { formState, onChangeHandler, resetForm } = inputForm({
     password: '',
     nickname: '',
     title: '',
@@ -17,14 +18,6 @@ const ReviewForm = () => {
   });
 
   const { nickname, title, content, password } = formState;
-
-  const date = new Date().toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric'
-  });
 
   //data내용 불러오기(api) mutation CUD (create)
   const mutation = useMutation({
@@ -37,6 +30,7 @@ const ReviewForm = () => {
   //게시글 작성하기
   const onSubmitHandeler = (e) => {
     e.preventDefault();
+    const date = new Date();
     if (validation()) {
       const newReview = {
         id: uuid(),
@@ -45,7 +39,7 @@ const ReviewForm = () => {
         content,
         nickname,
         password,
-        createAt: date
+        createAt: getFormattedDate(date)
       };
       mutation.mutate(newReview);
       resetForm();

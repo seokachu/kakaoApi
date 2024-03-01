@@ -19,49 +19,22 @@
       "createAt": "2024년 2월 29일 오전 6:25"
     },
     {
-      "id": "bf98db5b-123b-4af9-b4e7-1a7be7bdc574",
-      "place_id": "1326694524",
-      "title": "?",
-      "content": "?",
-      "nickname": "?",
-      "password": "?",
-      "createAt": "2024년 3월 2일 오전 7:07"
-    },
-    {
-      "id": "3e9b3a81-b907-2213-2cfd-d0b26f032f4d",
-      "place_id": "1326694524",
-      "title": "11",
-      "content": "11",
-      "nickname": "11",
-      "password": "11",
-      "createAt": "2024년 3월 2일 오전 7:08"
-    },
-    {
-      "id": "07f30d0a-14fa-917d-158c-92d393b6206f",
-      "place_id": "1785680469",
-      "title": "zz",
-      "content": "zz",
-      "nickname": "zz",
-      "password": "zz",
-      "createAt": "2024년 3월 2일 오전 7:08"
-    },
-    {
-      "id": "86f79d56-9c9b-f2aa-0348-cc898b9b3972",
+      "id": "75ddf407-cad8-11df-d788-85a96d1c2cb8",
       "place_id": "869162736",
-      "title": "zz",
-      "content": "zz",
-      "nickname": "zz",
-      "password": "zz",
-      "createAt": "2024년 3월 2일 오전 7:08"
+      "title": "하이",
+      "content": "gkdl",
+      "nickname": "하이",
+      "password": "ㅎkdl",
+      "createAt": "2024년 3월 2일 오전 7:42"
     },
     {
-      "id": "44cc4131-a0fe-d63a-0778-9229e5c3ca1d",
+      "id": "bc2874e9-00ec-6f8a-b016-41ee0d335f9f",
       "place_id": "869162736",
-      "title": "gg",
-      "content": "gg",
-      "nickname": "gg",
-      "password": "gg",
-      "createAt": "2024년 3월 2일 오전 7:08"
+      "title": "123",
+      "content": "123",
+      "nickname": "123",
+      "password": "123",
+      "createAt": "2024년 3월 2일 오전 8:00"
     }
   ]
 }
