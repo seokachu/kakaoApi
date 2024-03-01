@@ -17,11 +17,11 @@ export const getReview = async () => {
   return data;
 };
 
-// //추가하기
-// export const createTodo = async (todo) => {
-//   const { data } = await apiClient.post('/', todo);
-//   return data;
-// };
+//review 추가하기
+export const createReview = async (item) => {
+  const { data } = await apiClient.post('/review', item);
+  return data;
+};
 
 // //삭제하기
 // export const deleteTodo = async (id) => {

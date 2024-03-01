@@ -1,30 +1,49 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import detailForm from '../../components/hooks/detailForm';
+import { useParams } from 'react-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { createReview } from '../../api/api';
 
 const ReviewForm = () => {
-  //Custom Hook
-  const initialState = {
+  const { id } = useParams();
+  const queryClient = useQueryClient();
+
+  const { formState, onChangeHandler, resetForm } = detailForm({
     password: '',
     nickname: '',
     title: '',
     content: ''
-  };
-  const [formState, setFormState] = useState(initialState);
+  });
 
   const { nickname, title, content, password } = formState;
-  // console.log('nickname', nickname);
-  // console.log('title', title);
-  // console.log('content', content);
-  // console.log('password', password);
-  const onChangeHandler = (e) => {
-    const { name, value } = e.target; //아래 return 태그에서 name,value값을 가지고 오는것
-    //객체 6~9번째줄 가지고 오는것 [name]은 return부분name, value는 return문 아래 선언해준 value값을 가지고 오는것
-    setFormState((prev) => ({ ...prev, [name]: value }));
-  };
 
+  const date = new Date().toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric'
+  });
+
+  //data내용 불러오기(api)
+  const mutation = useMutation({
+    mutationFn: createReview,
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ['reviews'] });
+    }
+  });
+
+  //게시글 작성하기
   const onSubmitHandeler = (e) => {
     e.preventDefault();
-    setFormState(initialState);
-    alert('입력되었습니다.');
+    resetForm();
+    toast.success('입력되었습니다');
+    mutation.mutate({
+      id: crypto.randomUUID(),
+      title: 'Do Laundry'
+    });
   };
 
   return (
