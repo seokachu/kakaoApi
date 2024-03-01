@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { toast } from 'react-toastify';
 import detailForm from '../../components/hooks/detailForm';
-import { useParams } from 'react-router';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createReview } from '../../api/api';
+import uuid from 'react-uuid';
+import { useParams } from 'react-router';
 
 const ReviewForm = () => {
   const { id } = useParams();
@@ -26,11 +26,10 @@ const ReviewForm = () => {
     minute: 'numeric'
   });
 
-  //data내용 불러오기(api)
+  //data내용 불러오기(api) mutation CUD (create)
   const mutation = useMutation({
-    mutationFn: createReview,
+    mutationFn: (item) => createReview(item),
     onSuccess: () => {
-      // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ['reviews'] });
     }
   });
@@ -38,12 +37,41 @@ const ReviewForm = () => {
   //게시글 작성하기
   const onSubmitHandeler = (e) => {
     e.preventDefault();
-    resetForm();
-    toast.success('입력되었습니다');
-    mutation.mutate({
-      id: crypto.randomUUID(),
-      title: 'Do Laundry'
-    });
+    if (validation()) {
+      const newReview = {
+        id: uuid(),
+        place_id: id,
+        title,
+        content,
+        nickname,
+        password,
+        createAt: date
+      };
+      mutation.mutate(newReview);
+      resetForm();
+      toast.success('입력되었습니다');
+    }
+  };
+
+  //validation
+  const validation = () => {
+    if (!title.trim()) {
+      toast.error('제목을 입력해 주세요');
+      return;
+    }
+    if (!content.trim()) {
+      toast.error('내용을 입력해 주세요');
+      return;
+    }
+    if (!nickname.trim()) {
+      toast.error('닉네임을 입력해 주세요');
+      return;
+    }
+    if (!password.trim()) {
+      toast.error('패스워드를 입력해 주세요');
+      return;
+    }
+    return true;
   };
 
   return (
@@ -52,7 +80,7 @@ const ReviewForm = () => {
       <textarea name="content" value={content} onChange={onChangeHandler} placeholder="내용을 입력해 주세요" />
       <input name="nickname" value={nickname} onChange={onChangeHandler} type="text" placeholder="닉네임 입력" />
       <input name="password" value={password} onChange={onChangeHandler} type="password" placeholder="패스워드 입력" />
-      <button>입력하기</button>
+      <button type="submit">입력하기</button>
     </form>
   );
 };
