@@ -4,13 +4,14 @@ const ReviewItem = ({ review }) => {
   return (
     <li>
       <div>
-        <p>{id}</p>
-        <p>{place_id}</p>
-        <p>{nickname}</p>
-        <p>{title}</p>
-        <p>{content}</p>
-        <p>{createAt}</p>
-        <p>{password}</p>
+        <div>
+          <h2>닉네임:{nickname}</h2>
+          <time>{createAt}</time>
+        </div>
+        <div>
+          <p>제목:{title}</p>
+          <p>내용:{content}</p>
+        </div>
       </div>
     </li>
   );
