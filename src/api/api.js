@@ -12,7 +12,7 @@ export const apiClient = axios.create({
 });
 
 //api목록 가져오기
-export const getTodos = async () => {
+export const getReview = async () => {
   const { data } = await apiClient.get('/review');
   return data;
 };
