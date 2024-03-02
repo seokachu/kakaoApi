@@ -11,10 +11,22 @@ const ReviewItem = ({ review }) => {
   const { id, place_id, nickname, password, title, content, createAt } = review;
 
   //수정 state
-  const { editingState, setEditingState, editingValue, setEditingValue, onEditingHandler, resetForm } = EditingForm({
+  const {
+    editingState,
+    setEditingState,
+    editingValue,
+    setEditingValue,
+    onEditingHandler,
+    resetForm,
+    editingInputPassword,
+    setEditingInputPassword,
+    modeEditAndDelete,
+    setModeEditAndDelete
+  } = EditingForm({
     nickname,
     title,
-    content
+    content,
+    password
   });
 
   //react-query client
@@ -36,26 +48,55 @@ const ReviewItem = ({ review }) => {
     }
   });
 
+  //패스워드 확인
+  const onCheckPasswordHander = () => {
+    //처음에 사용자가 빈문자열로 넣었는지 먼저 확인해줌
+    if (editingValue.password.trim() === '') {
+      toast.error('비밀번호를 입력해 주세요');
+      return false;
+    }
+    if (password === editingValue.password) {
+      modeEditAndDelete ? onDeleteHander() : onEditDone();
+      return;
+    }
+    toast.error('비밀번호가 일치하지 않습니다');
+  };
+
   //삭제하기 btn
   const onDeleteHander = () => {
-    if (window.confirm('정말로 삭제하시겠습니까?')) {
-      deleteMutate(id);
-      alert('삭제되었습니다.');
+    //패스워드 확인내용 거치고 수정모드로 전환
+    setModeEditAndDelete(true);
+    //수정상태
+    if (editingState) {
+      if (window.confirm('정말로 삭제하시겠습니까?')) {
+        deleteMutate(id);
+        alert('삭제되었습니다.');
+      } else {
+        toast.error('삭제가 취소되었습니다.');
+      }
+    } else {
+      // 수정 상태가 아닌 경우, 수정 상태로 전환하고 패스워드 초기화
+      setEditingState(true);
+      setEditingValue((prev) => ({ ...prev, password: '' }));
     }
   };
 
   //수정하기 btn
   const onEditDone = () => {
+    //패스워드 거치고 수정상태로 전환
+    setModeEditAndDelete(false);
+    setEditingInputPassword(true);
     if (validation()) {
-      console.log(review.id);
-      console.log(editingValue.title);
-      console.log(editingValue.content);
+      setEditingValue({
+        title,
+        content,
+        password
+      });
       editMutate({ id: review.id, review: { title: editingValue.title, content: editingValue.content } });
-
       alert('수정되었습니다');
+      setEditingInputPassword(false);
       setEditingState(false);
       resetForm();
-      console.log(editingValue);
     }
   };
 
@@ -75,22 +116,16 @@ const ReviewItem = ({ review }) => {
   //취소버튼 클릭
   const onClickCancel = () => {
     setEditingState(false);
-    // resetForm();
+    resetForm();
   };
 
-  //수정버튼 클릭
+  //수정버튼 클릭시
   const onEditClick = () => {
-    setEditingValue({
-      title,
-      content
-    });
+    //패스워드 이전상태를 가져와서(복사해서) 새로운 상태로 업데이트(공백으로 지움)
+    setEditingValue((prev) => ({ ...prev, password: '' }));
+
     setEditingState(true);
   };
-
-  //패스워드 확인 핸들러
-  // const onCheckPasswordHander = () => {
-  //   if(password === editingPassword)
-  // };
 
   return (
     <li>
@@ -100,7 +135,8 @@ const ReviewItem = ({ review }) => {
           <time>{createAt}</time>
         </div>
         <div>
-          {editingState ? (
+          {/* 비밀번호가 일치하면 인풋창으로 바뀜 (true) */}
+          {editingInputPassword ? (
             <>
               <input type="text" name="title" value={editingValue.title} onChange={onEditingHandler} />
               <textarea name="content" value={editingValue.content} onChange={onEditingHandler} />
@@ -112,10 +148,18 @@ const ReviewItem = ({ review }) => {
             </>
           )}
         </div>
+        {/* 수정버튼을 클릭하면? 패스워드가 나옴 */}
         {editingState ? (
           <div>
+            <input
+              type="password"
+              name="password"
+              value={editingValue.password}
+              onChange={onEditingHandler}
+              placeholder="비밀번호를 입력해 주세요"
+            />
+            <button onClick={onCheckPasswordHander}>비밀번호 확인</button>
             <button onClick={onClickCancel}>취소</button>
-            <button onClick={onEditDone}>수정완료</button>
           </div>
         ) : (
           <div>
@@ -123,6 +167,13 @@ const ReviewItem = ({ review }) => {
             <button onClick={onDeleteHander}>삭제</button>
           </div>
         )}
+        {/* 수정버튼을 누르고 패스워드가 맞으면? 버튼부분이 취소,수정완료로 바뀜 */}
+        {editingInputPassword ? (
+          <div>
+            <button onClick={onClickCancel}>취소</button>
+            <button onClick={onEditDone}>수정완료</button>
+          </div>
+        ) : null}
       </div>
     </li>
   );
