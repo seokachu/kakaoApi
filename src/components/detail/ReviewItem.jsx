@@ -1,19 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteReview, updateReview } from '../../api/api';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { getFormattedDate } from '../../util/date';
 import uuid from 'react-uuid';
 import { toast } from 'react-toastify';
+import EditingForm from '../../components/hooks/EditForm';
 
 const ReviewItem = ({ review }) => {
   const queryClient = useQueryClient();
   const { id, place_id, nickname, password, title, content, createAt } = review;
 
   //수정 state
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingText, setEditingText] = useState(content);
-  const [editingTitle, setEditingTitle] = useState(title);
-  const [editingPassword, setEditingPassword] = useState('');
+  const { editingState, setEditingState, editingValue, setEditingValue, onEditingHandler, resetForm } = EditingForm({
+    nickname,
+    title,
+    content
+  });
 
   //react-query client
   //삭제 mutate
@@ -24,9 +26,11 @@ const ReviewItem = ({ review }) => {
     }
   });
 
-  //수정mutate
+  //수정 mutate
   const { mutate: editMutate } = useMutation({
-    mutationFn: (id, review) => updateReview(id, review),
+    mutationFn: async ({ id, review }) => {
+      await updateReview(id, review);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries();
     }
@@ -43,19 +47,44 @@ const ReviewItem = ({ review }) => {
   //수정하기 btn
   const onEditDone = () => {
     if (validation()) {
-      
-      editMutate(id, review);
+      console.log(review.id);
+      console.log(editingValue.title);
+      console.log(editingValue.content);
+      editMutate({ id: review.id, review: { title: editingValue.title, content: editingValue.content } });
+
+      alert('수정되었습니다');
+      setEditingState(false);
+      resetForm();
+      console.log(editingValue);
     }
   };
 
+  //수정 벨리데이션
   const validation = () => {
-    if (title === editingTitle) {
+    if (title === editingValue.title) {
       toast.error('제목 수정 내용이 없습니다.');
-      return;
+      return false;
     }
-    if (content === editingTitle) {
+    if (content === editingValue.content) {
       toast.error('내용 수정 내용이 없습니다.');
+      return false;
     }
+    return true;
+  };
+
+  //취소버튼 클릭
+  const onClickCancel = () => {
+    setEditingState(false);
+    // resetForm();
+  };
+
+  //수정버튼 클릭
+  const onEditClick = () => {
+    setEditingValue({
+      title,
+      content
+    });
+    setEditingState(true);
   };
 
   //패스워드 확인 핸들러
@@ -64,40 +93,38 @@ const ReviewItem = ({ review }) => {
   // };
 
   return (
-    <>
-      <li>
+    <li>
+      <div>
         <div>
-          <div>
-            <h2>닉네임:{nickname}</h2>
-            <time>{createAt}</time>
-          </div>
-          <div>
-            {isEditing ? (
-              <>
-                <input type="text" value={editingTitle} />
-                <textarea value={editingText} />
-              </>
-            ) : (
-              <>
-                <p>제목:{title}</p>
-                <p>내용:{content}</p>
-              </>
-            )}
-          </div>
-          {isEditing ? (
-            <div>
-              <button onClick={() => setIsEditing(false)}>취소</button>
-              <button onClick={onEditDone}>수정완료</button>
-            </div>
+          <h2>닉네임:{nickname}</h2>
+          <time>{createAt}</time>
+        </div>
+        <div>
+          {editingState ? (
+            <>
+              <input type="text" name="title" value={editingValue.title} onChange={onEditingHandler} />
+              <textarea name="content" value={editingValue.content} onChange={onEditingHandler} />
+            </>
           ) : (
-            <div>
-              <button onClick={() => setIsEditing(true)}>수정</button>
-              <button onClick={onDeleteHander}>삭제</button>
-            </div>
+            <>
+              <p>제목:{title}</p>
+              <p>내용:{content}</p>
+            </>
           )}
         </div>
-      </li>
-    </>
+        {editingState ? (
+          <div>
+            <button onClick={onClickCancel}>취소</button>
+            <button onClick={onEditDone}>수정완료</button>
+          </div>
+        ) : (
+          <div>
+            <button onClick={onEditClick}>수정</button>
+            <button onClick={onDeleteHander}>삭제</button>
+          </div>
+        )}
+      </div>
+    </li>
   );
 };
 

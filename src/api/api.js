@@ -30,4 +30,5 @@ export const deleteReview = async (id) => {
 //review 수정하기
 export const updateReview = async (id, review) => {
   await apiClient.patch(`/${id}`, review);
+  return id;
 };

@@ -18,7 +18,7 @@ const ReviewList = () => {
   그래서 블록 외부에서 선언해해주는게 좋음
   아니면 리턴문에 if isSuccess를 적어줘야하는데 그럼 3항연산자로 길어지니까 그냥 이렇게 빈 배열로 두면 됨
   */
-  let filteredReviews = [];
+  // let filteredReviews = [];
   // console.log(query);
   /*
   전체데이터를 가져와서 해당내용 place_id만 가져올 수 있게 찾음(필터링)
@@ -26,10 +26,9 @@ const ReviewList = () => {
   filter을 쓰면 [{}] 배열안에 객체로 나오기 때문에 find로 사용
   */
 
-  if (query.isSuccess) {
-    filteredReviews = query.data.filter((item) => item.place_id === id);
-    console.log(filteredReviews);
-  }
+  // if (query.isSuccess) {
+  //   console.log(filteredReviews);
+  // }
 
   if (query.isLoading) {
     return <div>로딩중입니다! 조금만 기다려 주세요.</div>;
@@ -38,6 +37,8 @@ const ReviewList = () => {
   if (query.isError) {
     console.log('Error:', query.isError);
   }
+
+  const filteredReviews = query.data.filter((item) => item.place_id === id);
 
   return (
     <ul>
