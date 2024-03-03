@@ -70,7 +70,7 @@ const ReviewForm = () => {
 
   return (
     <form onSubmit={onSubmitHandeler}>
-    <input
+      <input
         name="title"
         value={title}
         onChange={onChangeHandler}

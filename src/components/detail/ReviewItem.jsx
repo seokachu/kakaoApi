@@ -1,17 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteReview, updateReview } from '../../api/api';
-// import { useState } from 'react';
-import { getFormattedDate } from '../../util/date';
-import uuid from 'react-uuid';
 import { toast } from 'react-toastify';
 import EditingForm from '../../components/hooks/EditForm';
-// import { useState } from 'react';
+import { useRef } from 'react';
 
 const ReviewItem = ({ review }) => {
   const queryClient = useQueryClient();
   const { id, place_id, nickname, password, title, content, createAt } = review;
 
-  // const [toggle, setToggle] = useState(false);
   //수정 state
   const {
     editingState,
