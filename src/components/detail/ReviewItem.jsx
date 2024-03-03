@@ -2,11 +2,20 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteReview, updateReview } from '../../api/api';
 import { toast } from 'react-toastify';
 import EditingForm from '../../components/hooks/EditForm';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import styled from 'styled-components';
 
 const ReviewItem = ({ review }) => {
   const queryClient = useQueryClient();
   const { id, place_id, nickname, password, title, content, createAt } = review;
+
+  const [isVisible, setIsVisible] = useState(false);
+  const passwordRef = useRef(null);
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible); // 상태를 변경하여 컴포넌트의 가시성을 토글합니다.
+  };
+  console.log(isVisible);
 
   //수정 state
   const {
@@ -65,6 +74,7 @@ const ReviewItem = ({ review }) => {
   const onDeleteHander = () => {
     //패스워드 확인내용 거치고 수정모드로 전환
     setModeEditAndDelete(true);
+    toggleVisibility(false);
     //수정상태
     if (editingState) {
       if (window.confirm('정말로 삭제하시겠습니까?')) {
@@ -161,7 +171,7 @@ const ReviewItem = ({ review }) => {
         </div>
         {/* 수정버튼을 클릭하면? 패스워드가 나옴 */}
         {editingState ? (
-          <div>
+          <PasswordField ref={passwordRef} visible={isVisible ? 'true' : 'false'}>
             <input
               type="password"
               name="password"
@@ -171,7 +181,7 @@ const ReviewItem = ({ review }) => {
             />
             <button onClick={onCheckPasswordHander}>비밀번호 확인</button>
             <button onClick={onClickCancel}>취소</button>
-          </div>
+          </PasswordField>
         ) : (
           <div>
             <button onClick={onEditClick}>수정</button>
@@ -191,3 +201,7 @@ const ReviewItem = ({ review }) => {
 };
 
 export default ReviewItem;
+
+const PasswordField = styled.div`
+  display: ${(props) => (props.visible ? 'block' : 'none')};
+`;
