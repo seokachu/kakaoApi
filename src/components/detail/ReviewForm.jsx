@@ -70,7 +70,14 @@ const ReviewForm = () => {
 
   return (
     <form onSubmit={onSubmitHandeler}>
-      <input name="title" value={title} onChange={onChangeHandler} type="text" placeholder="제목을 입력해 주세요" />
+    <input
+        name="title"
+        value={title}
+        onChange={onChangeHandler}
+        type="text"
+        placeholder="제목을 입력해 주세요"
+        autoFocus
+      />
       <textarea name="content" value={content} onChange={onChangeHandler} placeholder="내용을 입력해 주세요" />
       <input name="nickname" value={nickname} onChange={onChangeHandler} type="text" placeholder="닉네임 입력" />
       <input name="password" value={password} onChange={onChangeHandler} type="password" placeholder="패스워드 입력" />

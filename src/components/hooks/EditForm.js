@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 const EditingForm = (initialState = {}) => {
-  const [editingState, setEditingState] = useState(false);
   const [modeEditAndDelete, setModeEditAndDelete] = useState(false);
+  const [editingState, setEditingState] = useState(false);
   const [editingInputPassword, setEditingInputPassword] = useState(false);
   const [editingValue, setEditingValue] = useState(initialState);
 

@@ -5,11 +5,13 @@ import { getFormattedDate } from '../../util/date';
 import uuid from 'react-uuid';
 import { toast } from 'react-toastify';
 import EditingForm from '../../components/hooks/EditForm';
+// import { useState } from 'react';
 
 const ReviewItem = ({ review }) => {
   const queryClient = useQueryClient();
   const { id, place_id, nickname, password, title, content, createAt } = review;
 
+  // const [toggle, setToggle] = useState(false);
   //수정 state
   const {
     editingState,
@@ -55,13 +57,9 @@ const ReviewItem = ({ review }) => {
       toast.error('비밀번호를 입력해 주세요');
       return false;
     }
-    // if (password === editingValue.password) {
-    //   modeEditAndDelete ? onDeleteHander() : onEditDone();
-    //   return;
-    // }
 
     if (editingState && password === editingValue.password) {
-      modeEditAndDelete ? onDeleteHander() : onEditDone();
+      modeEditAndDelete ? onDeleteHander() : onEditPassHander();
       return;
     }
     toast.error('비밀번호가 일치하지 않습니다');
@@ -86,28 +84,29 @@ const ReviewItem = ({ review }) => {
     }
   };
 
-  // //수정하기 btn
-  const onEditDone = () => {
+  //수정하기 btn
+  const onEditPassHander = () => {
     //패스워드 거치고 수정상태로 전환
     if (editingState) {
       setModeEditAndDelete(false);
       setEditingInputPassword(true);
-
-      if (validation()) {
-        setEditingValue({
-          title,
-          content,
-          password
-        });
-        editMutate({ id: review.id, review: { title: editingValue.title, content: editingValue.content } });
-        alert('수정되었습니다');
-        setEditingInputPassword(false);
-        setEditingState(false);
-        resetForm();
-      }
     }
   };
 
+  //수정완료 버튼
+  const onEditDone = () => {
+    if (editingState && validation()) {
+      editMutate({ id: review.id, review: { title: editingValue.title, content: editingValue.content } });
+      // setEditingValue({
+      //   title,
+      //   content
+      // });
+      alert('수정되었습니다');
+      setEditingInputPassword(false);
+      setEditingState(false);
+      setModeEditAndDelete(false);
+    }
+  };
   //수정모드중 취소버튼
   const onEditCancel = () => {
     setEditingState(false);
@@ -115,26 +114,6 @@ const ReviewItem = ({ review }) => {
     setModeEditAndDelete(false);
     setEditingInputPassword(false);
   };
-
-  // 수정하기 버튼 클릭 시
-  // const onEditDone = async () => {
-  //   // 패스워드 확인
-  //   if (onCheckPasswordHander()) {
-  //     // 벨리데이션 검사
-  //     if (validation()) {
-  //       // 수정 함수 호출
-  //       await editMutate({ id: review.id, review: { title: editingValue.title, content: editingValue.content } });
-  //       // 수정 완료 메시지 표시
-  //       alert('수정되었습니다');
-  //       // 수정 상태 종료
-  //       setEditingState(false);
-  //       // 폼 리셋
-  //       resetForm();
-  //       // 패스워드 인풋 초기화
-  //       setEditingValue((prev) => ({ ...prev, password: '' }));
-  //     }
-  //   }
-  // };
 
   //수정 벨리데이션
   const validation = () => {
@@ -165,7 +144,7 @@ const ReviewItem = ({ review }) => {
 
   return (
     <li>
-      <div>
+      <>
         <div>
           <h2>닉네임:{nickname}</h2>
           <time>{createAt}</time>
@@ -203,14 +182,14 @@ const ReviewItem = ({ review }) => {
             <button onClick={onDeleteHander}>삭제</button>
           </div>
         )}
-        {/* 수정버튼을 누르고 패스워드가 맞으면? 버튼부분이 취소,수정완료로 바뀜 */}
+        {/* 수정버튼을 누르고 패스워드가 맞으면? 버튼부분이 취소,수정완료 버튼이 나옴*/}
         {editingInputPassword ? (
           <div>
             <button onClick={onEditCancel}>취소</button>
             <button onClick={onEditDone}>수정완료</button>
           </div>
         ) : null}
-      </div>
+      </>
     </li>
   );
 };
