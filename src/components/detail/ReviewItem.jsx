@@ -55,7 +55,12 @@ const ReviewItem = ({ review }) => {
       toast.error('비밀번호를 입력해 주세요');
       return false;
     }
-    if (password === editingValue.password) {
+    // if (password === editingValue.password) {
+    //   modeEditAndDelete ? onDeleteHander() : onEditDone();
+    //   return;
+    // }
+
+    if (editingState && password === editingValue.password) {
       modeEditAndDelete ? onDeleteHander() : onEditDone();
       return;
     }
@@ -75,30 +80,61 @@ const ReviewItem = ({ review }) => {
         toast.error('삭제가 취소되었습니다.');
       }
     } else {
-      // 수정 상태가 아닌 경우, 수정 상태로 전환하고 패스워드 초기화
+      // 수정 상태가 아닌 경우, 패스워드 초기화
       setEditingState(true);
       setEditingValue((prev) => ({ ...prev, password: '' }));
     }
   };
 
-  //수정하기 btn
+  // //수정하기 btn
   const onEditDone = () => {
     //패스워드 거치고 수정상태로 전환
-    setModeEditAndDelete(false);
-    setEditingInputPassword(true);
-    if (validation()) {
-      setEditingValue({
-        title,
-        content,
-        password
-      });
-      editMutate({ id: review.id, review: { title: editingValue.title, content: editingValue.content } });
-      alert('수정되었습니다');
-      setEditingInputPassword(false);
-      setEditingState(false);
-      resetForm();
+    if (editingState) {
+      setModeEditAndDelete(false);
+      setEditingInputPassword(true);
+
+      if (validation()) {
+        setEditingValue({
+          title,
+          content,
+          password
+        });
+        editMutate({ id: review.id, review: { title: editingValue.title, content: editingValue.content } });
+        alert('수정되었습니다');
+        setEditingInputPassword(false);
+        setEditingState(false);
+        resetForm();
+      }
     }
   };
+
+  //수정모드중 취소버튼
+  const onEditCancel = () => {
+    setEditingState(false);
+    resetForm();
+    setModeEditAndDelete(false);
+    setEditingInputPassword(false);
+  };
+
+  // 수정하기 버튼 클릭 시
+  // const onEditDone = async () => {
+  //   // 패스워드 확인
+  //   if (onCheckPasswordHander()) {
+  //     // 벨리데이션 검사
+  //     if (validation()) {
+  //       // 수정 함수 호출
+  //       await editMutate({ id: review.id, review: { title: editingValue.title, content: editingValue.content } });
+  //       // 수정 완료 메시지 표시
+  //       alert('수정되었습니다');
+  //       // 수정 상태 종료
+  //       setEditingState(false);
+  //       // 폼 리셋
+  //       resetForm();
+  //       // 패스워드 인풋 초기화
+  //       setEditingValue((prev) => ({ ...prev, password: '' }));
+  //     }
+  //   }
+  // };
 
   //수정 벨리데이션
   const validation = () => {
@@ -113,17 +149,17 @@ const ReviewItem = ({ review }) => {
     return true;
   };
 
-  //취소버튼 클릭
+  //비밀번호 취소버튼 클릭
   const onClickCancel = () => {
     setEditingState(false);
     resetForm();
+    setModeEditAndDelete(false);
   };
 
   //수정버튼 클릭시
   const onEditClick = () => {
     //패스워드 이전상태를 가져와서(복사해서) 새로운 상태로 업데이트(공백으로 지움)
     setEditingValue((prev) => ({ ...prev, password: '' }));
-
     setEditingState(true);
   };
 
@@ -170,7 +206,7 @@ const ReviewItem = ({ review }) => {
         {/* 수정버튼을 누르고 패스워드가 맞으면? 버튼부분이 취소,수정완료로 바뀜 */}
         {editingInputPassword ? (
           <div>
-            <button onClick={onClickCancel}>취소</button>
+            <button onClick={onEditCancel}>취소</button>
             <button onClick={onEditDone}>수정완료</button>
           </div>
         ) : null}
